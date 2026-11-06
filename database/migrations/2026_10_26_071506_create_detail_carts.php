@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('detail_keranjang', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('keranjang_id')->constrained('keranjang')->cascadeOnDelete();
+            $table->foreignId('produk_id')->constrained('produk')->cascadeOnDelete();
+            $table->unsignedSmallInteger('jumlah')->default(1);
+            // Harga saat checkout (snapshot), diisi ketika pesanan dibuat
+            $table->unsignedInteger('harga')->nullable();
+            $table->timestamps();
+
+            // Satu produk hanya satu baris per keranjang
+            $table->unique(['keranjang_id', 'produk_id']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('detail_keranjang');
+    }
+};
